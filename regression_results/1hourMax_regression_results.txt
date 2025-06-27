@@ -1,0 +1,91 @@
+------------------------------
+Regression Result for angry
+               Mixed Linear Model Regression Results
+====================================================================
+Model:                 MixedLM    Dependent Variable:    angry      
+No. Observations:      8108       Method:                REML       
+No. Groups:            1152       Scale:                 272.4179   
+Min. group size:       1          Log-Likelihood:        -35190.9199
+Max. group size:       42         Converged:             Yes        
+Mean group size:       7.0                                          
+--------------------------------------------------------------------
+                          Coef.  Std.Err.   z    P>|z| [0.025 0.975]
+--------------------------------------------------------------------
+Intercept                 12.790    1.152 11.103 0.000 10.532 15.048
+var_age                    0.953    0.509  1.872 0.061 -0.045  1.951
+binary_female             -2.766    1.025 -2.698 0.007 -4.775 -0.757
+var_ladder                -0.503    0.299 -1.681 0.093 -1.089  0.083
+var_pre_survey_angry       6.229    0.505 12.329 0.000  5.239  7.220
+var_pre_survey_excited     0.545    0.519  1.049 0.294 -0.473  1.562
+predicted_angry_1hourMax   1.676    0.209  8.026 0.000  1.266  2.085
+Group Var                224.689    0.781                           
+====================================================================
+
+------------------------------
+Regression Result for excited
+                Mixed Linear Model Regression Results
+======================================================================
+Model:                 MixedLM     Dependent Variable:     excited    
+No. Observations:      8014        Method:                 REML       
+No. Groups:            1148        Scale:                  299.8262   
+Min. group size:       1           Log-Likelihood:         -35365.0124
+Max. group size:       44          Converged:              Yes        
+Mean group size:       7.0                                            
+----------------------------------------------------------------------
+                            Coef.  Std.Err.   z    P>|z| [0.025 0.975]
+----------------------------------------------------------------------
+Intercept                   29.494    1.952 15.113 0.000 25.669 33.319
+var_age                      1.217    0.635  1.915 0.055 -0.028  2.462
+binary_female               -1.767    1.286 -1.374 0.169 -4.287  0.754
+var_ladder                   3.191    0.373  8.554 0.000  2.460  3.922
+var_pre_survey_excited      11.451    0.651 17.591 0.000 10.176 12.727
+predicted_excited_1hourMax   0.745    0.371  2.010 0.044  0.018  1.472
+Group Var                  379.452    1.191                           
+======================================================================
+
+------------------------------
+Regression Result for sad
+              Mixed Linear Model Regression Results
+==================================================================
+Model:               MixedLM    Dependent Variable:    sad        
+No. Observations:    8052       Method:                REML       
+No. Groups:          1154       Scale:                 262.8578   
+Min. group size:     1          Log-Likelihood:        -34907.9350
+Max. group size:     45         Converged:             Yes        
+Mean group size:     7.0                                          
+------------------------------------------------------------------
+                        Coef.  Std.Err.   z    P>|z| [0.025 0.975]
+------------------------------------------------------------------
+Intercept               17.819    0.940 18.952 0.000 15.976 19.662
+var_age                 -1.194    0.540 -2.210 0.027 -2.253 -0.135
+binary_female           -0.743    1.100 -0.676 0.499 -2.898  1.413
+var_ladder              -1.381    0.322 -4.296 0.000 -2.011 -0.751
+var_pre_survey_sad       6.775    0.546 12.399 0.000  5.704  7.846
+var_pre_survey_excited  -0.726    0.557 -1.303 0.192 -1.818  0.366
+predicted_sad_1hourMax   0.804    0.154  5.232 0.000  0.503  1.105
+Group Var              268.426    0.939                           
+==================================================================
+
+------------------------------
+Regression Result for calm
+               Mixed Linear Model Regression Results
+===================================================================
+Model:                MixedLM    Dependent Variable:    calm       
+No. Observations:     8184       Method:                REML       
+No. Groups:           1155       Scale:                 298.4718   
+Min. group size:      1          Log-Likelihood:        -36034.4244
+Max. group size:      45         Converged:             Yes        
+Mean group size:      7.1                                          
+-------------------------------------------------------------------
+                         Coef.  Std.Err.   z    P>|z| [0.025 0.975]
+-------------------------------------------------------------------
+Intercept                61.106    0.969 63.090 0.000 59.208 63.004
+var_age                   2.558    0.599  4.270 0.000  1.384  3.732
+binary_female            -0.792    1.214 -0.652 0.514 -3.171  1.587
+var_ladder                1.916    0.352  5.444 0.000  1.226  2.606
+var_pre_survey_calm       9.154    0.603 15.184 0.000  7.972 10.335
+var_pre_survey_excited    0.729    0.636  1.147 0.252 -0.517  1.975
+predicted_calm_1hourMax  -0.629    0.198 -3.167 0.002 -1.018 -0.239
+Group Var               334.195    1.047                           
+===================================================================
+
