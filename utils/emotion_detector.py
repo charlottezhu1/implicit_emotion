@@ -1,24 +1,8 @@
 """
 Emotion Detection Utility - Enhanced Version
 
-This module provides functions to detect emotions in tweets using GPT API.
+This module provides functions to predict emotional impacts of tweets using GPT API.
 Supports options for including images, personalized prompts, and user demographic context.
-
-KEY FEATURES:
-1. Basic emotion detection for any text content
-2. Image analysis integration for multimedia tweets
-3. Personalized analysis (user feelings vs content analysis)
-4. User demographic context integration for enhanced personalization
-5. Tweet ID lookup functionality
-6. Complete tweet + user analysis pipeline
-
-ENHANCED FUNCTIONALITY:
-- The main gpt_detect_emotion() function now accepts an optional participant_id parameter
-- When participant_id is provided, user demographics are automatically retrieved and appended to prompts
-- This enables highly personalized emotion predictions based on user characteristics like:
-  * Political affiliation (Republican/Democrat/Independent)
-  * Age, Gender, Education level, Race/Ethnicity, Income
-  * Experimental study conditions
 
 USAGE EXAMPLES:
 
@@ -56,8 +40,10 @@ def gpt_detect_emotion(
     media_url: Optional[str] = None,
     include_image: bool = False,
     personalized: bool = False,
+    implied: bool = False,
     participant_id: Optional[str] = None,
-    user_csv_path: str = "experiment_data/pre_study.csv",
+    user_csv_path: str = "../csvs/pre_study.csv",
+    debug: bool = False,
 ) -> Dict[str, Any]:
     """
     Call GPT to determine the specific emotion type and associated arousal levels in the input tweet.
@@ -67,11 +53,14 @@ def gpt_detect_emotion(
         media_url (str, optional): URL of the image/media attached to the tweet
         include_image (bool): Whether to include image analysis in the prompt
         personalized (bool): Whether to use personalized emotion prediction (user's feelings vs general emotions)
+        implied (bool): Whether to consider implied emotions not directly stated
         participant_id (str, optional): User ID to get demographic context for personalized analysis
         user_csv_path (str): Path to the CSV file containing user profiles
+        debug (bool): Whether to print debug information
 
     Returns:
         dict: JSON response containing emotion ratings and explanation
+        Note: If the implied flag is on, the response will include both explicit and implicit emotions. Remember to handle the response accordingly.
     """
 
     # If participant_id is provided, get user context and append to tweet text
@@ -83,7 +72,8 @@ def gpt_detect_emotion(
             personalized = (
                 True  # Force personalized mode when user context is available
             )
-            print(f"Using user context for participant {participant_id}")
+            if debug:
+                print(f"Using user context for participant {participant_id}")
         else:
             return {"error": f"Could not retrieve user profile for {participant_id}"}
 
@@ -108,8 +98,11 @@ def gpt_detect_emotion(
     }
 
     # Build the prompt based on flags
-    prompt = _build_prompt(processed_tweet_text, include_image, personalized, schema)
-    print("Generated prompt:", prompt)
+    prompt = _build_prompt(
+        processed_tweet_text, include_image, personalized, implied, schema
+    )
+    if debug:
+        print("Generated prompt:", prompt)
 
     # Prepare messages for API call
     messages = _prepare_messages(prompt, media_url, include_image, schema)
@@ -130,16 +123,22 @@ def gpt_detect_emotion(
             return {"error": "Empty response from GPT API"}
 
         data = json.loads(content)
-        print("GPT response:", data)
+        if debug:
+            print("GPT response:", data)
         return data
 
     except Exception as e:
-        print(f"Error calling GPT API: {e}")
+        if debug:
+            print(f"Error calling GPT API: {e}")
         return {"error": str(e)}
 
 
 def _build_prompt(
-    tweet_text: str, include_image: bool, personalized: bool, schema: Dict
+    tweet_text: str,
+    include_image: bool,
+    personalized: bool,
+    implied: bool,
+    schema: Dict,
 ) -> str:
     """Build the prompt based on the configuration flags."""
 
@@ -187,7 +186,7 @@ def _build_prompt(
         """
     else:
         role_instruction = """
-        As an expert annotator specializing in emotions in social media content, your job is to identify and categorize the emotions present or expressed in the input content.
+        As an expert annotator specializing in emotions in social media content, your job is to predict what emotions and feelings the input would make a user feel when they read/view it.
         
         Analyze the emotional tone, sentiment, and emotional content directly expressed or implied in the tweet text.
         """
@@ -211,16 +210,22 @@ def _build_prompt(
         Input tweet: {tweet_text}
         """
 
+    # If implied emotions are requested, adjust the instruction
+    if implied:
+        content_instruction += """
+        Consider any implied emotions that may not be directly stated but are suggested by the context or tone of the tweet. They might as well create an emotional impact on the user.
+        """
+
     # Rating instruction
     rating_instruction = f"""
     Rate the intensity of each emotion with the following categories:
-    1: Not at all — the tweet would {"not evoke this emotion in the user" if personalized else "not contain or express this emotion"}.
-    2: Slightly — the tweet would {"evoke this emotion only slightly" if personalized else "slightly contain or express this emotion"}.
-    3: Moderately — the tweet would {"evoke this emotion to a moderate degree" if personalized else "moderately contain or express this emotion"}.
-    4: Strongly — the tweet would {"evoke this emotion strongly" if personalized else "strongly contain or express this emotion"}.
-    5: Extremely — the tweet would {"evoke this emotion very strongly" if personalized else "very strongly contain or express this emotion"}.
+    1: Not at all — the tweet would not evoke this emotion in {"this particular user" if personalized else "general social media users"}.
+    2: Slightly — the tweet would evoke this emotion slightly in {"this particular user" if personalized else "general social media users"}.
+    3: Moderately — the tweet would evoke this emotion moderately in {"this particular user" if personalized else "general social media users"}.
+    4: Strongly — the tweet would evoke this emotion strongly in {"this particular user" if personalized else "general social media users"}.
+    5: Extremely — the tweet would evoke this emotion extremely in {"this particular user" if personalized else "general social media users"}.
 
-    If the tweet would {"make the user feel that emotion" if personalized else "contain that emotion"}, assign a 2-5 to the emotion category depending on the intensity; if {"the tweet would not make the user feel such emotion" if personalized else "the emotion is not present"}, assign a 1.
+    If the tweet would {"make this particular user" if personalized else "make a general social media user"} feel that emotion, assign a 2-5 to the emotion category depending on the intensity; if {"the tweet would not make the user feel such emotion" if personalized else "the emotion is not present"}, assign a 1.
     """
 
     # Example (adjusted based on personalization)
@@ -228,13 +233,58 @@ def _build_prompt(
         example = """
         Example input: I'm passionate about indie app development because I've been able to take months off at a time for my health and have no impact on my income 🩷 
 
-        Example output: { "Nervous": 1, "Sad": 1, "Happy": 5, "Calm": 1, "Excited": 4, "Aroused": 2, "Angry": 1, "Relaxed": 1, "Fearful": 1, "Enthusiastic": 3, "Still": 1, "Satisfied": 1, "Bored": 1, "Lonely": 1, "Tired": 1, "explanation": "The tweet is likely to make a user feel extremely happy due to the use of the word 'passionate' and the heart emoji 🩷. Although the tweet conveys an enthusiastic tone, it would probably make the user feel moderately enthusiastic, as they might not be interested in app development or fully empathetic toward the author of the tweet." }
+        Example output: { "Nervous": 1, "Sad": 1, "Happy": 5, "Calm": 1, "Excited": 4, "Aroused": 2, "Angry": 1, "Relaxed": 1, "Fearful": 1, "Enthusiastic": 3, "Still": 1, "Satisfied": 1, "Bored": 1, "Lonely": 1, "Tired": 1, "explanation": "The tweet is likely to make a user feel extremely happy due to the use of the word 'passionate' and the heart emoji 🩷. Although the tweet conveys an enthusiastic tone, it would probably make the user feel moderately enthusiastic, as they might not be interested in app development or fully empathetic toward the author of the tweet. {give personalized reasoning}" }
         """
+
+    if implied:
+        example = """
+        Example input: The boy fell asleep and never woke up again. 
+
+        Example output: {
+        "implicit": {
+            "Nervous": 3,
+            "Sad": 5,
+            "Happy": 0,
+            "Calm": 1,
+            "Excited": 0,
+            "Aroused": 0,
+            "Angry": 1,
+            "Relaxed": 0,
+            "Fearful": 4,
+            "Enthusiastic": 0,
+            "Still": 2,
+            "Satisfied": 0,
+            "Bored": 0,
+            "Lonely": 2,
+            "Tired": 2,
+            "explanation": "The sentence evokes deep sadness and fear through its depiction of death, especially the peaceful yet final nature of 'falling asleep and never waking up.' Implicitly, it stirs feelings of grief, existential fear, and helplessness, particularly around themes of mortality and loss. The simplicity of the language amplifies the emotional weight."
+        },
+        "explicit": {
+            "Nervous": 1,
+            "Sad": 5,
+            "Happy": 0,
+            "Calm": 1,
+            "Excited": 0,
+            "Aroused": 0,
+            "Angry": 0,
+            "Relaxed": 0,
+            "Fearful": 2,
+            "Enthusiastic": 0,
+            "Still": 3,
+            "Satisfied": 0,
+            "Bored": 0,
+            "Lonely": 1,
+            "Tired": 3,
+            "explanation": "Explicitly, the sentence presents a peaceful but tragic event — a boy falling asleep and not waking up. The phrase directly communicates death in a calm, euphemistic way, suggesting sadness and stillness. Words like 'fell asleep' and 'never woke up' contribute to an emotionally quiet but somber tone."
+        }
+        }
+        """
+
     else:
         example = """
         Example input: I'm passionate about indie app development because I've been able to take months off at a time for my health and have no impact on my income 🩷 
 
-        Example output: { "Nervous": 1, "Sad": 1, "Happy": 4, "Calm": 2, "Excited": 3, "Aroused": 1, "Angry": 1, "Relaxed": 3, "Fearful": 1, "Enthusiastic": 5, "Still": 1, "Satisfied": 4, "Bored": 1, "Lonely": 1, "Tired": 1, "explanation": "The tweet expresses extremely enthusiastic emotion due to the word 'passionate' and positive tone about work flexibility. It shows strong satisfaction and happiness about the author's work situation, with some calmness and relaxation implied by the health breaks mentioned." }
+        Example output: { "Nervous": 1, "Sad": 1, "Happy": 4, "Calm": 2, "Excited": 3, "Aroused": 1, "Angry": 1, "Relaxed": 3, "Fearful": 1, "Enthusiastic": 5, "Still": 1, "Satisfied": 4, "Bored": 1, "Lonely": 1, "Tired": 1, "explanation": "The tweet is likely to make a user feel extremely happy due to the use of the word 'passionate' and the heart emoji 🩷. Although the tweet conveys an enthusiastic tone, it would probably make the user feel moderately enthusiastic, as they might not be interested in app development or fully empathetic toward the author of the tweet." }
         """
 
     # Combine all parts
@@ -376,9 +426,11 @@ def detect_emotion_by_tweet_id(
     media_url: Optional[str] = None,
     include_image: bool = False,
     personalized: bool = False,
+    implied: bool = False,
     participant_id: Optional[str] = None,
-    csv_path: str = "csvs/unique_tweets.csv",
-    user_csv_path: str = "experiment_data/pre_study.csv",
+    csv_path: str = "../csvs/unique_tweets.csv",
+    user_csv_path: str = "../csvs/pre_study.csv",
+    debug: bool = False,
 ) -> Dict[str, Any]:
     """
     Detect emotions for a tweet by its ID (retrieves text from CSV first).
@@ -388,9 +440,11 @@ def detect_emotion_by_tweet_id(
         media_url (str, optional): URL of the image/media attached to the tweet
         include_image (bool): Whether to include image analysis in the prompt
         personalized (bool): Whether to use personalized emotion prediction
+        implied (bool): Whether to consider implied emotions not directly stated
         participant_id (str, optional): User ID to get demographic context for personalized analysis
         csv_path (str): Path to the CSV file containing tweets
         user_csv_path (str): Path to the CSV file containing user profiles
+        debug (bool): Whether to print debug information
 
     Returns:
         dict: JSON response containing emotion ratings and explanation, or error message
@@ -407,20 +461,22 @@ def detect_emotion_by_tweet_id(
         media_url,
         include_image,
         personalized,
+        implied,
         participant_id,
         user_csv_path,
+        debug,
     )
 
 
 def get_user_profile_by_id(
-    participant_id: str, csv_path: str = "experiment_data/pre_study.csv"
+    participant_id: str, csv_path: str = "../csvs/pre_study.csv"
 ) -> Optional[str]:
     """
-    Retrieve user demographic profile by participant ID from the pre_study.csv file.
+    Retrieve user demographic profile by participant ID from the pre_study_emotion.csv file.
 
     Args:
         participant_id (str): The participant ID to search for
-        csv_path (str): Path to the CSV file containing user profiles (default: "experiment_data/pre_study.csv")
+        csv_path (str): Path to the CSV file containing user profiles (default: "../csvs/pre_study.csv")
 
     Returns:
         str or None: Formatted string with relevant user demographics, None if not found or error occurred
@@ -523,8 +579,10 @@ def detect_emotion_with_user_context(
     participant_id: str,
     media_url: Optional[str] = None,
     include_image: bool = False,
+    implied: bool = False,
     include_user_context: bool = True,
-    csv_path: str = "experiment_data/pre_study.csv",
+    csv_path: str = "../csvs/pre_study.csv",
+    debug: bool = False,
 ) -> Dict[str, Any]:
     """
     Detect emotions with user demographic context for personalized analysis.
@@ -534,8 +592,10 @@ def detect_emotion_with_user_context(
         participant_id (str): The participant ID for user context
         media_url (str, optional): URL of the image/media attached to the tweet
         include_image (bool): Whether to include image analysis in the prompt
+        implied (bool): Whether to consider implied emotions not directly stated
         include_user_context (bool): Whether to include user demographics in the analysis
         csv_path (str): Path to the CSV file containing user profiles
+        debug (bool): Whether to print debug information
 
     Returns:
         dict: JSON response containing emotion ratings and explanation, or error message
@@ -546,8 +606,10 @@ def detect_emotion_with_user_context(
         media_url,
         include_image,
         personalized=True,
+        implied=implied,
         participant_id=participant_id if include_user_context else None,
         user_csv_path=csv_path,
+        debug=debug,
     )
 
 
@@ -556,9 +618,11 @@ def detect_emotion_by_tweet_and_user_id(
     participant_id: str,
     media_url: Optional[str] = None,
     include_image: bool = False,
+    implied: bool = False,
     include_user_context: bool = True,
-    tweet_csv_path: str = "csvs/unique_tweets.csv",
-    user_csv_path: str = "experiment_data/pre_study.csv",
+    tweet_csv_path: str = "../csvs/unique_tweets.csv",
+    user_csv_path: str = "../csvs/pre_study.csv",
+    debug: bool = False,
 ) -> Dict[str, Any]:
     """
     Detect emotions by tweet ID and user ID with full context.
@@ -568,9 +632,11 @@ def detect_emotion_by_tweet_and_user_id(
         participant_id (str): The participant ID for user context
         media_url (str, optional): URL of the image/media attached to the tweet
         include_image (bool): Whether to include image analysis in the prompt
+        implied (bool): Whether to consider implied emotions not directly stated
         include_user_context (bool): Whether to include user demographics in the analysis
         tweet_csv_path (str): Path to the CSV file containing tweets
         user_csv_path (str): Path to the CSV file containing user profiles
+        debug (bool): Whether to print debug information
 
     Returns:
         dict: JSON response containing emotion ratings and explanation, or error message
@@ -581,9 +647,11 @@ def detect_emotion_by_tweet_and_user_id(
         media_url,
         include_image,
         personalized=True,
+        implied=implied,
         participant_id=participant_id if include_user_context else None,
         csv_path=tweet_csv_path,
         user_csv_path=user_csv_path,
+        debug=debug,
     )
 
 
