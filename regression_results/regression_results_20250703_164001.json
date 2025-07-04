@@ -1,0 +1,68 @@
+{
+  "1hourAverage": {
+    "angry": {
+      "base_model": {
+        "error": "'MixedLMResults' object has no attribute 'n_groups'",
+        "formula": "angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + predicted_angry_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "with_excitement": {
+        "error": "Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined\n    angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + predicted_angry_1hourAverage\n                                                                          ^^^^^^^^^^^^^^^^^^^^^^",
+        "formula": "angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + predicted_angry_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "minimal_model": {
+        "error": "'MixedLMResults' object has no attribute 'n_groups'",
+        "formula": "angry ~ var_pre_survey_angry + predicted_angry_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "demographics_only": {
+        "error": "'MixedLMResults' object has no attribute 'n_groups'",
+        "formula": "angry ~ var_age + binary_female + var_ladder + predicted_angry_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "full_model": {
+        "error": "Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined\n    angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + var_pre_survey_sad + predicted_angry_1hourAverage\n                                                                          ^^^^^^^^^^^^^^^^^^^^^^",
+        "formula": "angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + var_pre_survey_sad + predicted_angry_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      }
+    },
+    "sad": {
+      "base_model": {
+        "error": "'MixedLMResults' object has no attribute 'n_groups'",
+        "formula": "sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + predicted_sad_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "with_excitement": {
+        "error": "Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined\n    sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + predicted_sad_1hourAverage\n                                                                      ^^^^^^^^^^^^^^^^^^^^^^",
+        "formula": "sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + predicted_sad_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "minimal_model": {
+        "error": "'MixedLMResults' object has no attribute 'n_groups'",
+        "formula": "sad ~ var_pre_survey_sad + predicted_sad_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "demographics_only": {
+        "error": "'MixedLMResults' object has no attribute 'n_groups'",
+        "formula": "sad ~ var_age + binary_female + var_ladder + predicted_sad_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      },
+      "full_model": {
+        "error": "Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined\n    sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + var_pre_survey_sad + predicted_sad_1hourAverage\n                                                                      ^^^^^^^^^^^^^^^^^^^^^^",
+        "formula": "sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + var_pre_survey_sad + predicted_sad_1hourAverage",
+        "n_obs": 0,
+        "n_groups": 0
+      }
+    }
+  }
+}

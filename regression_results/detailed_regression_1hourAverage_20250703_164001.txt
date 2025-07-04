@@ -1,0 +1,97 @@
+Detailed Regression Results for 1hourAverage
+================================================================================
+
+
+EMOTION: ANGRY
+--------------------------------------------------
+
+Model: base_model
+Formula: angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + predicted_angry_1hourAverage
+Observations: 0
+Groups: 0
+Error: 'MixedLMResults' object has no attribute 'n_groups'
+
+================================================================================
+
+Model: with_excitement
+Formula: angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + predicted_angry_1hourAverage
+Observations: 0
+Groups: 0
+Error: Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined
+    angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + predicted_angry_1hourAverage
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^
+
+================================================================================
+
+Model: minimal_model
+Formula: angry ~ var_pre_survey_angry + predicted_angry_1hourAverage
+Observations: 0
+Groups: 0
+Error: 'MixedLMResults' object has no attribute 'n_groups'
+
+================================================================================
+
+Model: demographics_only
+Formula: angry ~ var_age + binary_female + var_ladder + predicted_angry_1hourAverage
+Observations: 0
+Groups: 0
+Error: 'MixedLMResults' object has no attribute 'n_groups'
+
+================================================================================
+
+Model: full_model
+Formula: angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + var_pre_survey_sad + predicted_angry_1hourAverage
+Observations: 0
+Groups: 0
+Error: Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined
+    angry ~ var_age + binary_female + var_ladder + var_pre_survey_angry + var_pre_survey_excited + var_pre_survey_sad + predicted_angry_1hourAverage
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^
+
+================================================================================
+
+EMOTION: SAD
+--------------------------------------------------
+
+Model: base_model
+Formula: sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + predicted_sad_1hourAverage
+Observations: 0
+Groups: 0
+Error: 'MixedLMResults' object has no attribute 'n_groups'
+
+================================================================================
+
+Model: with_excitement
+Formula: sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + predicted_sad_1hourAverage
+Observations: 0
+Groups: 0
+Error: Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined
+    sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + predicted_sad_1hourAverage
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^
+
+================================================================================
+
+Model: minimal_model
+Formula: sad ~ var_pre_survey_sad + predicted_sad_1hourAverage
+Observations: 0
+Groups: 0
+Error: 'MixedLMResults' object has no attribute 'n_groups'
+
+================================================================================
+
+Model: demographics_only
+Formula: sad ~ var_age + binary_female + var_ladder + predicted_sad_1hourAverage
+Observations: 0
+Groups: 0
+Error: 'MixedLMResults' object has no attribute 'n_groups'
+
+================================================================================
+
+Model: full_model
+Formula: sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + var_pre_survey_sad + predicted_sad_1hourAverage
+Observations: 0
+Groups: 0
+Error: Error evaluating factor: NameError: name 'var_pre_survey_excited' is not defined
+    sad ~ var_age + binary_female + var_ladder + var_pre_survey_sad + var_pre_survey_excited + var_pre_survey_sad + predicted_sad_1hourAverage
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^
+
+================================================================================
