@@ -337,9 +337,24 @@ def _build_prompt(
 
     else:
         example = """
-        Example input: I'm passionate about indie app development because I've been able to take months off at a time for my health and have no impact on my income 🩷 
+        Example input 1: San Diego Comic Con is tomorrow! What surprises do you hope to see coming from DC?
 
-        Example output: { "Nervous": 1, "Sad": 1, "Happy": 4, "Calm": 2, "Excited": 3, "Aroused": 1, "Angry": 1, "Relaxed": 3, "Fearful": 1, "Enthusiastic": 5, "Still": 1, "Satisfied": 4, "Bored": 1, "Lonely": 1, "explanation": "The tweet is likely to make a user feel extremely happy due to the use of the word 'passionate' and the heart emoji 🩷. Although the tweet conveys an enthusiastic tone, it would probably make the user feel moderately enthusiastic, as they might not be interested in app development or fully empathetic toward the author of the tweet." }
+        Example output 1: { "Nervous": 2, "Sad": 1, "Happy": 4, "Calm": 2, "Excited": 5, "Angry": 1, "Relaxed": 2, "Fearful": 1, "Enthusiastic": 5, "Satisfied": 3, "Bored": 1, "Lonely": 1, "explanation": "This tweet generates a high level of excitement and enthusiasm due to the anticipation of Comic Con and potential DC surprises. It may also bring a moderate level of happiness and satisfaction to fans. Slight nervousness or tension might come from the suspense of not knowing what surprises will be revealed." }
+        
+        
+        Example input 2: Night School: Trump Threatens Black Voters; AOC Slams Democrats Over Biden; Amanda Seales Weighs In
+
+        Example output 2: { "Nervous": 3, "Sad": 3, "Happy": 1, "Calm": 1, "Excited": 2, "Angry": 4, "Relaxed": 1, "Fearful": 3, "Enthusiastic": 1, "Satisfied": 2, "Bored": 2, "Lonely": 2, "explanation": "The headline conveys emotionally charged political content, likely causing nervousness, anger, sadness, and fear in readers. There's little joy or calm due to the confrontational and heavy nature of the subject matter, although some might feel slightly excited or interested in the drama or political stakes." }
+
+        
+        Example input 3: “Can you spare 5 seconds to thank God.”🙏
+        
+        Example output 3: { "Nervous": 1, "Sad": 1, "Happy": 4, "Calm": 4, "Excited": 3, "Angry": 1, "Relaxed": 4, "Fearful": 1, "Enthusiastic": 4, "Satisfied": 4, "Bored": 1, "Lonely": 1, "explanation": "This tweet evokes a peaceful and grateful emotional tone. It encourages a reflective and calm mindset, likely increasing feelings of happiness, relaxation, and satisfaction. The use of the prayer emoji and spiritual appeal also adds to emotional warmth without introducing high arousal or negative affect." }
+
+        
+        Example input 4: Please help me honor US Army Ranger SGT Roberto D. Sanchez, 24. Killed in Kandahar, Afghanistan on Oct. 1, 2009. Heaven was needing a Hero.
+        
+        Example output 4: { "Nervous": 2, "Sad": 3, "Happy": 1, "Calm": 2, "Excited": 1, "Angry": 2, "Relaxed": 2, "Fearful": 2, "Enthusiastic": 2, "Satisfied": 2, "Bored": 2, "Lonely": 2, "explanation": "This commemorative message evokes sadness and somber reflection, especially given the loss of a young soldier. There's a tone of reverence and subdued patriotism that might stir some anger or fear related to war, but also gratitude and calmness in honoring sacrifice. It is emotionally complex but subdued overall." }
         """
 
     # Combine all parts
